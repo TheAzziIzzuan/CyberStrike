@@ -1,0 +1,22 @@
+{
+    "manifest_version": 3,
+    "name": "Server Info Scanner",
+    "version": "1.0",
+    "description": "Scan and display IP address and server location of websites.",
+    "permissions": ["activeTab", "scripting"],
+    "host_permissions": ["http://*/*", "https://*/*"],
+    "action": {
+      "default_popup": "popup.html",
+      "default_icon": {
+        "16": "icon.png",
+        "48": "icon.png",
+        "128": "icon.png"
+      }
+    },
+    "icons": {
+      "16": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
+    }
+  }
+  

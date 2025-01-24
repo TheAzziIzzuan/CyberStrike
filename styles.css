@@ -1,0 +1,16 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 10px;
+  }
+  
+  #scanButton {
+    margin: 10px 0;
+    padding: 10px 20px;
+    font-size: 16px;
+  }
+  
+  #output p {
+    margin: 5px 0;
+  }
+  
