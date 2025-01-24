@@ -2,7 +2,7 @@ document.getElementById("scanButton").addEventListener("click", async () => {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     const url = new URL(tab.url);
   
-    const apiKey = "7fd4f3f9d3dd4e1e8bff6c78661295fe"; // Replace with your free API key
+    const apiKey = "cf0b9da2dcd44d29b2719647092b0e26"; // Replace with your free API key
     const response = await fetch(`https://api.ipgeolocation.io/ipgeo?apiKey=${apiKey}&domain=${url.hostname}`);
     const data = await response.json();
   
