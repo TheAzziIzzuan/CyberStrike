@@ -4,13 +4,20 @@ body {
     padding: 10px;
   }
   
+  h1 {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  
   #scanButton {
-    margin: 10px 0;
     padding: 10px 20px;
     font-size: 16px;
+    margin: 10px 0;
+    cursor: pointer;
   }
   
   #output p {
     margin: 5px 0;
+    font-size: 14px;
   }
   
