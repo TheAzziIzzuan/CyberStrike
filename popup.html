@@ -5,11 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Server Info Scanner</title>
   <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      width: 600px; /* Fixed width for the popup */
+      height: 800px; /* Fixed height for the popup */
+      margin: 0;
+      padding: 0;
+      overflow: hidden; /* Prevent unwanted scrollbars */
+    }
+  </style>
 </head>
 <body>
-  <h1>Server Info</h1>
-  <button id="scanButton">Scan Website</button>
-  <div id="output"></div>
+  <div class="container">
+    <h1>🌍 Server Info Scanner</h1>
+    <div class="button-container">
+      <button id="scanButton">Scan Website</button>
+      <button id="helpButton">Help</button>
+    </div>
+    <div id="loading" class="loading-spinner" style="display: none;"></div>
+    <div id="output" class="info-box">
+      <p>Click the button to fetch server details.</p>
+    </div>
+  </div>
   <script src="popup.js"></script>
 </body>
 </html>
