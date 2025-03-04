@@ -1,10 +1,13 @@
 {
   "manifest_version": 3,
   "name": "Server Info Scanner",
-  "version": "1.0",
+  "version": "1.1",
   "description": "Scan and display server information and security vulnerabilities.",
-  "permissions": ["activeTab", "scripting"],
+  "permissions": ["activeTab", "scripting", "declarativeNetRequest"],
   "host_permissions": ["http://*/*", "https://*/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
   "action": {
     "default_popup": "popup.html",
     "default_icon": "icon.png"
