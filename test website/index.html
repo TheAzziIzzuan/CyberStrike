@@ -6,11 +6,18 @@
 </head>
 <body>
     <h1>Welcome to the Test Website</h1>
-    <p>This site is used to test Broken Access Control vulnerabilities.</p>
+    <p>This site is used to test Broken Access Control and SSRF vulnerabilities.</p>
+    
     <ul>
         <li><a href="/admin">Hidden Admin Panel</a> (Should be hidden!)</li>
         <li><a href="/restricted">Restricted Page</a> (Should return 403!)</li>
         <li><a href="/api/public-data">Public API Data</a> (Exposed API!)</li>
     </ul>
+
+    <!-- 🚨 SSRF Simulation Button -->
+    <h2>SSRF Test</h2>
+    <button id="ssrfTestButton">Test SSRF</button>
+    <p id="ssrfResponse">Click the button to test SSRF vulnerability.</p>
+
 </body>
 </html>
