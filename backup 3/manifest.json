@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Server Info Scanner",
+  "version": "1.0",
+  "description": "Scan and display server information and security vulnerabilities.",
+  "permissions": ["activeTab", "scripting"],
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon.png"
+  },
+  "icons": {
+    "16": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  },
+  "web_accessible_resources": [{
+    "resources": ["common.txt"],
+    "matches": ["<all_urls>"]
+  }]
+}
