@@ -787,103 +787,167 @@ document.getElementById("injectionButton").addEventListener("click", async () =>
 
         // === [1] SCANNING LOGIC (same as yours) ===
 
-        // Test for CWE-89: SQL Injection
+        // CWE-89: SQL Injection
         const sqlInjectionPayload = "username=admin&password=1234' OR '1'='1";
         const sqlResponse = await fetch(url.href, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: sqlInjectionPayload,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: sqlInjectionPayload,
         });
         const sqlText = await sqlResponse.text();
         if (sqlText.includes("error") || sqlText.includes("SQL syntax")) {
-            vulnerabilities.push("CWE-89: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')");
+        vulnerabilities.push("CWE-89: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')");
         }
 
-        // Test for CWE-79: Cross-Site Scripting (XSS)
+        // CWE-79: Cross-Site Scripting (XSS)
         const xssPayload = "<script>alert('XSS')</script>";
         const xssResponse = await fetch(url.href, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `username=admin&comment=${encodeURIComponent(xssPayload)}`,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `username=admin&comment=${encodeURIComponent(xssPayload)}`,
         });
         const xssText = await xssResponse.text();
         if (xssText.includes(xssPayload)) {
-            vulnerabilities.push("CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')");
+        vulnerabilities.push("CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')");
         }
 
-        // Test for CWE-77: Command Injection
+        // CWE-77: Command Injection
         const commandInjectionPayload = "; ls -la";
         const commandResponse = await fetch(url.href, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `username=admin&command=${encodeURIComponent(commandInjectionPayload)}`,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `username=admin&command=${encodeURIComponent(commandInjectionPayload)}`,
         });
         const commandText = await commandResponse.text();
         if (commandText.includes("bin") || commandText.includes("etc")) {
-            vulnerabilities.push("CWE-77: Improper Neutralization of Special Elements used in a Command ('Command Injection')");
+        vulnerabilities.push("CWE-77: Improper Neutralization of Special Elements used in a Command ('Command Injection')");
         }
 
-        // Test for CWE-78: OS Command Injection
+        // CWE-78: OS Command Injection
         const osCommandInjectionPayload = "| whoami";
         const osCommandResponse = await fetch(url.href, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `username=admin&command=${encodeURIComponent(osCommandInjectionPayload)}`,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `username=admin&command=${encodeURIComponent(osCommandInjectionPayload)}`,
         });
         const osCommandText = await osCommandResponse.text();
         if (osCommandText.includes("root") || osCommandText.includes("user")) {
-            vulnerabilities.push("CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')");
+        vulnerabilities.push("CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')");
         }
 
-        // Test for CWE-90: LDAP Injection
+        // CWE-90: LDAP Injection
         const ldapInjectionPayload = "*)(uid=*))(|(uid=*";
         const ldapResponse = await fetch(url.href, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `username=${encodeURIComponent(ldapInjectionPayload)}&password=1234`,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `username=${encodeURIComponent(ldapInjectionPayload)}&password=1234`,
         });
         const ldapText = await ldapResponse.text();
         if (ldapText.includes("error") || ldapText.includes("LDAP")) {
-            vulnerabilities.push("CWE-90: Improper Neutralization of Special Elements used in an LDAP Query ('LDAP Injection')");
+        vulnerabilities.push("CWE-90: Improper Neutralization of Special Elements used in an LDAP Query ('LDAP Injection')");
         }
 
-        // Test for CWE-91: XML Injection (Blind XPath Injection)
-        const xmlInjectionPayload = "' or '1'='1";  // This is a common XPath injection payload
-
+        // CWE-91: XML Injection (Blind XPath Injection)
+        const xmlInjectionPayload = "' or '1'='1";
         const xmlResponse = await fetch(url.href, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/xml' },
-            body: `<user><username>${xmlInjectionPayload}</username><password>1234</password></user>`,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/xml' },
+        body: `<user><username>${xmlInjectionPayload}</username><password>1234</password></user>`,
         });
-
         const xmlText = await xmlResponse.text();
-
-        // Check the response for specific issues that could indicate XPath injection vulnerability
         if (
-            // Check for signs that the injected payload might have altered the XPath query
-            xmlText.includes("error") ||
-            xmlText.includes("XPath") ||
-            xmlText.includes("invalid") ||   // A typical response when XPath queries fail
-            xmlText.includes("syntax")      // XPath query errors often have syntax-related terms
+        xmlText.includes("error") ||
+        xmlText.includes("XPath") ||
+        xmlText.includes("invalid") ||
+        xmlText.includes("syntax")
         ) {
-            // Avoid false positives by being specific about XPath errors and injection patterns
-            vulnerabilities.push("CWE-91: XML Injection (aka Blind XPath Injection)");
+        vulnerabilities.push("CWE-91: XML Injection (aka Blind XPath Injection)");
         } else {
-            // Log or handle the case where no vulnerability was detected
-            console.log("No evidence of XPath injection vulnerability.");
+        console.log("No evidence of XPath injection vulnerability.");
         }
 
-
-        // Test for CWE-113: HTTP Response Splitting
+        // CWE-113: HTTP Response Splitting
         const httpResponseSplittingPayload = "%0d%0aSet-Cookie: injected=value";
         const httpResponseSplittingResponse = await fetch(url.href, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `username=admin${httpResponseSplittingPayload}`,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `username=admin${httpResponseSplittingPayload}`,
         });
         const httpResponseSplittingText = await httpResponseSplittingResponse.text();
         if (httpResponseSplittingText.includes("injected=value")) {
-            vulnerabilities.push("CWE-113: Improper Neutralization of CRLF Sequences in HTTP Headers ('HTTP Response Splitting')");
+        vulnerabilities.push("CWE-113: Improper Neutralization of CRLF Sequences in HTTP Headers ('HTTP Response Splitting')");
+        }
+
+        // CWE-116: Improper Encoding or Escaping of Output
+        const encodingPayload = `<script>alert("escaped")</script>`;
+        const encodingResponse = await fetch(url.href, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `username=${encodeURIComponent(encodingPayload)}`,
+        });
+        const encodingText = await encodingResponse.text();
+        if (encodingText.includes(encodingPayload)) {
+        vulnerabilities.push("CWE-116: Improper Encoding or Escaping of Output");
+        }
+
+        // CWE-470: Unsafe Reflection
+        const reflectionPayload = "reflection_input=java.lang.Runtime.getRuntime().exec('calc')";
+        const reflectionResponse = await fetch(url.href, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: reflectionPayload,
+        });
+        const reflectionText = await reflectionResponse.text();
+        if (reflectionText.includes("Runtime") || reflectionText.includes("exec")) {
+        vulnerabilities.push("CWE-470: Use of Externally-Controlled Input to Select Classes or Code ('Unsafe Reflection')");
+        }
+
+        // CWE-643: XPath Injection
+        const xpathInjectionPayload = "xpath_query=') or ('1'='1";
+        const xpathResponse = await fetch(url.href, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: xpathInjectionPayload,
+        });
+        const xpathText = await xpathResponse.text();
+        if (xpathText.includes("XPath")) {
+        vulnerabilities.push("CWE-643: Improper Neutralization of Data within XPath Expressions ('XPath Injection')");
+        }
+
+        // CWE-75: Special Element Injection
+        const specialElementPayload = "username=<script>alert('specialInjection')</script>";
+        const specialElementResponse = await fetch(url.href, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: specialElementPayload,
+        });
+        const specialElementText = await specialElementResponse.text();
+        if (specialElementText.includes("specialInjection")) {
+        vulnerabilities.push("CWE-75: Failure to Sanitize Special Elements into a Different Plane (Special Element Injection)");
+        }
+
+        // CWE-74: Injection into a Downstream Component
+        const downstreamPayload = "username=<script>alert('downstream')</script>";
+        const downstreamResponse = await fetch(url.href, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: downstreamPayload,
+        });
+        const downstreamText = await downstreamResponse.text();
+        if (downstreamText.includes("downstream")) {
+        vulnerabilities.push("CWE-74: Improper Neutralization of Special Elements in Output Used by a Downstream Component ('Injection')");
+        }
+
+        // CWE-88: Argument Injection
+        const argumentInjectionPayload = "command=--option 'malicious_argument'";
+        const argumentInjectionResponse = await fetch(url.href, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: argumentInjectionPayload,
+        });
+        const argumentInjectionText = await argumentInjectionResponse.text();
+        if (argumentInjectionText.includes("malicious_argument")) {
+        vulnerabilities.push("CWE-88: Improper Neutralization of Argument Delimiters in a Command ('Argument Injection')");
         }
 
         // === [2] DISPLAY RESULTS & CREATE BUTTONS ===
