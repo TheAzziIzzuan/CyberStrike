@@ -616,7 +616,7 @@ document.getElementById("injectionButton").addEventListener("click", async () =>
       vulnerabilities.push("CWE-113: Improper Neutralization of CRLF Sequences in HTTP Headers ('HTTP Response Splitting')");
     }
 
-    // === [2] SHOW RESULTS & CREATE BUTTONS FOR EACH CWE ===
+    // === [2] DISPLAY RESULTS & CREATE BUTTONS ===
 
     if (vulnerabilities.length > 0) {
       outputDiv.style.borderColor = "red";
@@ -624,16 +624,15 @@ document.getElementById("injectionButton").addEventListener("click", async () =>
         ⚠️ Potential injection vulnerabilities detected!
         <br>
         Vulnerabilities:
-        <ul>
+        <ul style="list-style-type: disc; padding-left: 20px; text-align: left;">
           ${vulnerabilities.map((vuln) => `<li>${vuln}</li>`).join("")}
         </ul>
-        <p style="text-decoration: underline;">Select an attack to perform:</p>
+        <p style="text-decoration: underline;">\nSelect an attack to perform:</p>
       `;
 
-      // Create a container for the buttons
+      // Create buttons container for the attacks
       let buttonsHtml = "<div>";
       vulnerabilities.forEach((vuln) => {
-        // Parse out the CWE number (e.g., "89" from "CWE-89: ...")
         const cweNumber = parseCweNumber(vuln);
         if (cweNumber) {
           buttonsHtml += `<button class="attackButton" data-cwe="${cweNumber}">CWE-${cweNumber}</button> `;
@@ -642,7 +641,7 @@ document.getElementById("injectionButton").addEventListener("click", async () =>
       buttonsHtml += "</div>";
       outputDiv.innerHTML += buttonsHtml;
 
-      // Add event listeners to each button
+      // Add event listeners to each attack button
       document.querySelectorAll(".attackButton").forEach((button) => {
         button.addEventListener("click", () => {
           const cweNumber = button.getAttribute("data-cwe");
@@ -742,7 +741,6 @@ function fillSQLInjection(payload) {
         }
     }
 }
-
 
 /* ----------------------- Server-Side Request Forgery ----------------------- */
 document.getElementById("scanSSRFButton").addEventListener("click", async () => {
