@@ -603,3 +603,46 @@ async function fetchHTTPHeaders(domain) {
   }
   return response.json();
 }
+
+async function scanIDOR() {
+  // Get the active tab's URL origin
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  const baseOrigin = new URL(tab.url).origin; // e.g., "http://cyberstrike.zapto.org"
+
+  // Retrieve user inputs
+  const urlPattern = document.getElementById("idorUrlPattern").value.trim(); // e.g., "profile.php?id="
+  const startValue = parseInt(document.getElementById("idorStartInput").value, 10) || 1;
+  const iterations = parseInt(document.getElementById("idorIterationsInput").value, 10) || 10;
+
+  const outputDiv = document.getElementById("idorOutput");
+  outputDiv.innerHTML = "🔍 Starting IDOR scan...<br>";
+
+  // Loop through the specified range and append the number to the pattern
+  for (let i = startValue; i < startValue + iterations; i++) {
+    // Construct the full URL (ensuring a slash between the origin and the pattern)
+    // e.g., "http://cyberstrike.zapto.org/profile.php?id=17"
+    const testUrl = `${baseOrigin}/${urlPattern}${i}`;
+    
+    try {
+      const res = await fetch(testUrl, { method: "GET" });
+      if (res.status === 200) {
+        outputDiv.innerHTML += `✅ Accessible: <a href="${testUrl}" target="_blank">${testUrl}</a><br>`;
+      } else if (res.status === 403) {
+        outputDiv.innerHTML += `⛔ Forbidden (403): <a href="${testUrl}" target="_blank">${testUrl}</a> (Exists but blocked)<br>`;
+      } else if (res.status === 404) {
+        outputDiv.innerHTML += `❌ Not Found (404): <a href="${testUrl}" target="_blank">${testUrl}</a><br>`;
+      } else {
+        outputDiv.innerHTML += `ℹ️ Response ${res.status}: <a href="${testUrl}" target="_blank">${testUrl}</a><br>`;
+      }
+    } catch (error) {
+      outputDiv.innerHTML += `❌ Error accessing: ${testUrl}<br>`;
+    }
+  }
+  outputDiv.innerHTML += "🔍 IDOR scan complete.";
+}
+
+// Attach event listener to the IDOR scan button
+document.getElementById("idorScanButton").addEventListener("click", async () => {
+  await scanIDOR();
+});
+

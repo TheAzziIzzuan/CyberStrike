@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
   <div class="container">
     <h1>🌍 Server Info Scanner</h1>
 
@@ -15,6 +14,7 @@
     <div class="tab-buttons">
       <button class="tab-btn active" data-tab="general">Scan Website</button>
       <button class="tab-btn" data-tab="broken-access">Broken Access Control</button>
+      <button class="tab-btn" data-tab="idor-scan">IDOR Scanner</button>
       <button class="tab-btn" data-tab="other-feature">Other Feature</button>
     </div>
 
@@ -33,6 +33,7 @@
       </div>
     </div>
 
+    <!-- Broken Access Control Tab -->
     <div id="broken-access" class="tab">
       <h3>Broken Access Control</h3>
 
@@ -80,6 +81,24 @@
     
       <div id="hiddenUrlsOutput" class="output"></div>
     </div>
+
+    <!-- IDOR Scanner Tab -->
+  <div id="idor-scan" class="tab">
+    <h3>IDOR Scanner</h3>
+    <label for="idorUrlPattern">URL Pattern:</label>
+    <!-- User enters the path portion, e.g., "profile.php?id=" -->
+    <input type="text" id="idorUrlPattern" placeholder="e.g., profile.php?id=">
+    
+    <label for="idorStartInput">Start Value:</label>
+    <input type="number" id="idorStartInput" placeholder="e.g., 1">
+
+    <label for="idorIterationsInput">Iterations:</label>
+    <input type="number" id="idorIterationsInput" placeholder="e.g., 10">
+
+    <button id="idorScanButton">Scan for IDOR</button>
+    <div id="idorOutput" class="output"></div>
+  </div>
+
 
     <!-- Other Feature Tab -->
     <div id="other-feature" class="tab">

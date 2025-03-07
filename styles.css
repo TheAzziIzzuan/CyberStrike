@@ -208,3 +208,52 @@ button#stopScanButton:hover {
   margin-top: 10px;
   background-color: transparent; /* Ensure no background color */
 }
+
+#idor-scan {
+  padding: 15px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+#idor-scan h3 {
+  font-size: 1.5em;
+  margin-bottom: 20px;
+}
+
+#idor-scan label {
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+#idor-scan input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+#idor-scan button {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#idor-scan button:hover {
+  background-color: #0056b3;
+}
+
+#idor-scan .output {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-top: 20px;
+  background-color: #f9f9f9;
+  height: 200px;
+  overflow-y: auto;
+}
