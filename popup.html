@@ -1,23 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Server Info Scanner</title>
+  <title>CyberStrike</title>
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
   <div class="container">
-    <h1>🌍 Server Info Scanner</h1>
-
+    <h1>🛡️⚔️ CyberStrike</h1>
     <!-- Tab Buttons -->
     <div class="tab-buttons">
       <button class="tab-btn active" data-tab="general">Scan Website</button>
       <button class="tab-btn" data-tab="broken-access">Broken Access Control</button>
       <button class="tab-btn" data-tab="idor-scan">IDOR Scanner</button>
-      <button class="tab-btn" data-tab="other-feature">Other Feature</button>
+      <button class="tab-btn" data-tab="cryptographic">Cryptographic Failures</button>
+      <button class="tab-btn" data-tab="injection">Injection</button>
+      <button class="tab-btn" data-tab="ssrf">Server-Side Request Forgery</button>
     </div>
 
+    <!-- Tab Content -->
     <!-- General Scan Tab -->
     <div id="general" class="tab active">
       <h3>General Website Scan</h3>
@@ -53,7 +57,7 @@
       </div>
 
       <button id="numericScanButton">Scan Numeric Iterations</button>
-      
+
       <!-- Wordlist Upload -->
       <div class="file-upload-container">
         <label for="wordlistUpload" class="custom-file-upload">
@@ -63,7 +67,7 @@
         <span id="fileNameDisplay" style="margin-left: 10px; font-size: 14px;"></span>
         <button id="removeFileButton" style="display: none;">Remove File</button>
       </div>
-    
+
       <!-- Scan Buttons -->
       <div class="scan-buttons">
         <button id="hiddenUrlsButton">Scan Hidden URLs</button>
@@ -71,43 +75,68 @@
         <button id="scanHtmlButton" class="button">Scan for .html Files</button>
         <button id="scanPhpButton" class="button">Scan for .php Files</button>
       </div>
-    
+
       <!-- Progress Text -->
       <p id="progressText">Progress: 0%</p>
       <p id="foundCount">Found URLs: 0</p>
-    
+
       <!-- Stop Scan Button -->
       <button id="stopScanButton" style="display:none;">Stop Scan</button>
-    
+
       <div id="hiddenUrlsOutput" class="output"></div>
     </div>
 
     <!-- IDOR Scanner Tab -->
-  <div id="idor-scan" class="tab">
-    <h3>IDOR Scanner</h3>
-    <label for="idorUrlPattern">URL Pattern:</label>
-    <!-- User enters the path portion, e.g., "profile.php?id=" -->
-    <input type="text" id="idorUrlPattern" placeholder="e.g., profile.php?id=">
-    
-    <label for="idorStartInput">Start Value:</label>
-    <input type="number" id="idorStartInput" placeholder="e.g., 1">
+    <div id="idor-scan" class="tab">
+      <h3>IDOR Scanner</h3>
+      <label for="idorUrlPattern">URL Pattern:</label>
+      <!-- User enters the path portion, e.g., "profile.php?id=" -->
+      <input type="text" id="idorUrlPattern" placeholder="e.g., profile.php?id=">
 
-    <label for="idorIterationsInput">Iterations:</label>
-    <input type="number" id="idorIterationsInput" placeholder="e.g., 10">
+      <label for="idorStartInput">Start Value:</label>
+      <input type="number" id="idorStartInput" placeholder="e.g., 1">
 
-    <button id="idorScanButton">Scan for IDOR</button>
-    <div id="idorOutput" class="output"></div>
-  </div>
+      <label for="idorIterationsInput">Iterations:</label>
+      <input type="number" id="idorIterationsInput" placeholder="e.g., 10">
 
+      <button id="idorScanButton">Scan for IDOR</button>
+      <div id="idorOutput" class="output"></div>
+    </div>
 
-    <!-- Other Feature Tab -->
-    <div id="other-feature" class="tab">
-      <h3>Other Security Feature</h3>
-      <button id="otherFeatureButton">Run Other Test</button>
-      <div id="otherFeatureOutput" class="output"></div>
+    <!-- Cryptographic Failures Tab -->
+    <div id="cryptographic" class="tab">
+      <h3>Cryptographic Failures</h3>
+      <button id="cfButton">Scan for Cryptographic Failures</button>
+      <div id="cfOutput" class="output">
+        <!-- Vulnerability scan output for cryptographic issues -->
+      </div>
+    </div>
+
+    <!-- Injection Tab -->
+    <div id="injection" class="tab">
+      <h3>Injection Vulnerabilities</h3>
+      <button id="injectionButton">Injection Scan</button>
+      <div id="injectionOutput" class="output">
+        <!-- Injection scan results will be shown here -->
+      </div>
+    </div>
+
+    <!-- SSRF Tab -->
+    <div id="ssrf" class="tab">
+      <h3>Server-Side Request Forgery (SSRF)</h3>
+      <button id="scanSSRFButton">Scan for SSRF Risks</button>
+      <div id="ssrfOutput" class="output">
+        <!-- Vulnerability scan output for SSRF issues -->
+      </div>
+    </div>
+
+    <!-- Help Button (can be placed outside tabs) -->
+    <div class="help-container">
+      <button id="helpButton">Help</button>
     </div>
   </div>
 
-  <script src="popup.js"></script>
+  <script type="module" src="popup.js"></script>
 </body>
+
 </html>
