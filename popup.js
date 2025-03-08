@@ -611,18 +611,31 @@ async function scanIDOR() {
     const baseOrigin = new URL(tab.url).origin; // e.g., "http://cyberstrike.zapto.org"
 
     // Retrieve user inputs
-    const urlPattern = document.getElementById("idorUrlPattern").value.trim(); // e.g., "profile.php?id="
+    const urlPattern = document.getElementById("idorUrlPattern").value.trim(); // e.g., "download.php?file=invoice_7.pdf" or "profile.php?id="
     const startValue = parseInt(document.getElementById("idorStartInput").value, 10) || 1;
     const iterations = parseInt(document.getElementById("idorIterationsInput").value, 10) || 10;
 
     const outputDiv = document.getElementById("idorOutput");
     outputDiv.innerHTML = "🔍 Starting IDOR scan...<br>";
 
-    // Loop through the specified range and append the number to the pattern
+    // Determine if the pattern ends with a file extension (e.g., .pdf, .txt, etc.)
+    // This regex matches a dot followed by one or more alphanumeric characters at the end of the string.
+    const extensionMatch = urlPattern.match(/(\.[a-zA-Z0-9]+)$/);
+    let basePattern = urlPattern;
+    let extension = "";
+
+    if (extensionMatch) {
+        extension = extensionMatch[1]; // e.g., ".pdf"
+        basePattern = urlPattern.slice(0, -extension.length);
+    }
+
+    // Loop through the specified range and build the test URL
     for (let i = startValue; i < startValue + iterations; i++) {
-        // Construct the full URL (ensuring a slash between the origin and the pattern)
-        // e.g., "http://cyberstrike.zapto.org/profile.php?id=17"
-        const testUrl = `${baseOrigin}/${urlPattern}${i}`;
+        // If an extension is found, insert the iteration number before it.
+        // Otherwise, just append the iteration number.
+        const testUrl = extension 
+            ? `${baseOrigin}/${basePattern}${i}${extension}` 
+            : `${baseOrigin}/${urlPattern}${i}`;
 
         try {
             const res = await fetch(testUrl, { method: "GET" });
@@ -641,6 +654,7 @@ async function scanIDOR() {
     }
     outputDiv.innerHTML += "🔍 IDOR scan complete.";
 }
+
 
 // Attach event listener to the IDOR scan button
 document.getElementById("idorScanButton").addEventListener("click", async () => {
