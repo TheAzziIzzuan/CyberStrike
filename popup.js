@@ -1009,19 +1009,19 @@ document.getElementById("injectionButton").addEventListener("click", async () =>
 
 // === [3] HELPER FUNCTIONS FOR ATTACK BUTTONS ===
 
-// A map of payloads for each CWE
+//map of payloads for each CWE
 const cweAttackPayloads = {
-    // Example: SQL Injection (CWE-89)
+    //SQL Injection (CWE-89)
     "89": {
         username: "1' OR '1'='1",
         password: "1' OR '1'='1",
     },
-    // Example: LDAP Injection (CWE-90)
+    //LDAP Injection (CWE-90)
     "90": {
         username: "*admin)(|(uid=*))",
         password: "anything",
     },
-    // Example: XML Injection (CWE-91)
+    //XML Injection (CWE-91)
     "91": {
         username: "admin' or '1'='1",
         password: "anything",
