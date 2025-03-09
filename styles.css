@@ -31,13 +31,15 @@ button.active {
 }
 
 .tab {
-  display: none; /* Hide all tabs by default */
+  display: none;
+  /* Hide all tabs by default */
   padding: 15px;
   text-align: center;
 }
 
 .tab.active {
-  display: block; /* Show only the active tab */
+  display: block;
+  /* Show only the active tab */
 }
 
 .output {
@@ -75,16 +77,19 @@ button#stopScanButton:hover {
 
 /* Style the file upload container */
 .file-upload-container {
-  margin-bottom: 20px; /* Add space between the file upload and scan buttons */
+  margin-bottom: 20px;
+  /* Add space between the file upload and scan buttons */
   display: flex;
   align-items: center;
 }
 
 /* Style the scan buttons container */
 .scan-buttons {
-  margin-bottom: 20px; /* Add space between the buttons and progress text */
+  margin-bottom: 20px;
+  /* Add space between the buttons and progress text */
   display: flex;
-  gap: 10px; /* Add spacing between the buttons */
+  gap: 10px;
+  /* Add spacing between the buttons */
 }
 
 /* Ensure buttons are styled consistently */
@@ -167,13 +172,15 @@ button#stopScanButton:hover {
 }
 
 .inner-tab {
-  display: none; /* Hide all inner tabs by default */
+  display: none;
+  /* Hide all inner tabs by default */
   padding: 15px;
   text-align: center;
 }
 
 .inner-tab.active {
-  display: block; /* Show only the active inner tab */
+  display: block;
+  /* Show only the active inner tab */
 }
 
 #websiteOutput {
@@ -203,10 +210,13 @@ button#stopScanButton:hover {
 }
 
 #scanResults {
-  border: none; /* Remove any border */
-  padding: 0; /* Remove any padding */
+  border: none;
+  /* Remove any border */
+  padding: 0;
+  /* Remove any padding */
   margin-top: 10px;
-  background-color: transparent; /* Ensure no background color */
+  background-color: transparent;
+  /* Ensure no background color */
 }
 
 #idor-scan {

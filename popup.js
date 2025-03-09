@@ -1172,5 +1172,6 @@ document.getElementById("scanSSRFButton").addEventListener("click", async () => 
 
 /* ----------------------- Help Button ----------------------- */
 document.getElementById("helpButton").addEventListener("click", () => {
-    chrome.tabs.create({ url: "https://www.example.com/help" });
+    const pdfUrl = chrome.runtime.getURL("libs/help.pdf");
+    chrome.tabs.create({ url: pdfUrl });
 });
