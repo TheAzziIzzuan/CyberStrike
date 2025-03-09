@@ -1,2 +1,0 @@
-Admin Panel Found
-This is a test file.
